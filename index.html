@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ez.</title>
+<meta name="description" content="Stuffs complets, builds Gunsmith, tier list, perks, maps et munitions pour Arena Breakout: Infinite (PC).">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2312151a'/%3E%3Ctext x='4' y='24' font-family='Arial' font-weight='900' font-size='20' fill='%23e7e9ec'%3EEz%3C/text%3E%3Crect x='25' y='20' width='4' height='4' fill='%23e3a646'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: barre d'onglets façon HUD de raid, une colonne de contenu, données en grilles serrées */
+:root{
+  --bg:#12151a; --panel:#191d24; --panel-2:#20252e; --line:#2c323d;
+  --fg:#e7e9ec; --muted:#8e97a5; --accent:#e3a646; --accent-ink:#1a1408;
+  --s:#e3a646; --a:#7fb3d5; --b:#93a58a; --c:#7a808b;
+  --good:#6fbf8a; --warn:#e3a646; --bad:#e06c5a;
+  --f-display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+  --bg:#eef0f2; --panel:#ffffff; --panel-2:#f4f5f7; --line:#d6dae0;
+  --fg:#15181d; --muted:#5b6370; --accent:#a8690f; --accent-ink:#fff8ec;
+  --s:#a8690f; --a:#2f6f99; --b:#4f6a43; --c:#6a707a;
+  --good:#2f8a52; --warn:#a8690f; --bad:#b9412f; color-scheme:light }}
+:root[data-theme="light"]{
+  --bg:#eef0f2; --panel:#ffffff; --panel-2:#f4f5f7; --line:#d6dae0;
+  --fg:#15181d; --muted:#5b6370; --accent:#a8690f; --accent-ink:#fff8ec;
+  --s:#a8690f; --a:#2f6f99; --b:#4f6a43; --c:#6a707a;
+  --good:#2f8a52; --warn:#a8690f; --bad:#b9412f; color-scheme:light }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--f-body);margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:20px 64px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;padding-block:8px 18px;border-bottom:1px solid var(--line)}
+.brand{font:800 56px/0.9 var(--f-display);letter-spacing:-.01em}
+.brand span{color:var(--accent)}
+.sub{color:var(--muted);font-size:13px;max-width:52ch}
+.season{font:500 12px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:right}
+.season b{color:var(--accent);font-weight:500}
+.theme{margin-top:8px;font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;background:none;border:1px solid var(--line);color:var(--muted);border-radius:4px;padding:3px 8px;cursor:pointer}
+
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:4px;overflow-x:auto;padding-block:10px;border-bottom:1px solid var(--line);margin-bottom:24px;scrollbar-width:thin}
+nav.tabs button{font:700 17px var(--f-display);text-transform:uppercase;letter-spacing:.06em;background:none;border:0;color:var(--muted);padding:8px 14px;border-radius:6px;cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--accent-ink);background:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+h2{font:800 32px/1.05 var(--f-display);text-transform:uppercase;margin:0 0 6px;text-wrap:balance}
+.lede{color:var(--muted);margin:0 0 20px;max-width:68ch}
+.label{font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.filters.last{margin-bottom:18px}
+.chip{font:600 13px var(--f-body);border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:6px 12px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.flabel{font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);align-self:center;min-width:72px}
+
+/* Stuff complet */
+.picker{display:grid;gap:4px;margin-bottom:18px}
+.picker .filters{margin-bottom:6px}
+.loadout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media (max-width:820px){.loadout{grid-template-columns:1fr}}
+.stack{display:grid;gap:12px;min-width:0}
+.slots{display:grid}
+.slotrow{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.slotrow:first-of-type{border-top:0;padding-top:0}
+.slotrow > span:first-child{font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding-top:3px}
+.slotrow b{font-weight:600}
+.slotrow small{display:block;color:var(--muted);font-size:13px}
+.ammo-tag{font:500 12px var(--f-mono);color:var(--accent)}
+.sumbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.sumbar .label{flex:1 1 200px}
+.warn{font-size:13px;color:var(--warn);margin:0}
+
+/* Builds */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.input,.select{font:500 14px var(--f-body);background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-width:0}
+.input{flex:1 1 200px}
+.btn{font:700 15px var(--f-display);text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--accent);background:none;color:var(--accent);padding:7px 12px;border-radius:6px;cursor:pointer}
+.btn.solid{background:var(--accent);color:var(--accent-ink)}
+.count{font:500 12px var(--f-mono);color:var(--muted);margin:0 0 10px}
+.builds{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.build{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;gap:10px;min-width:0}
+.build.hl{outline:2px solid var(--accent);outline-offset:2px}
+.build-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.gun{font:800 24px/1 var(--f-display);text-transform:uppercase}
+.bname{color:var(--muted);font-size:13px}
+.price{font:500 13px var(--f-mono);color:var(--accent);white-space:nowrap;font-variant-numeric:tabular-nums}
+.star{background:none;border:0;cursor:pointer;font-size:20px;line-height:1;color:var(--muted);padding:0 0 0 6px;vertical-align:-2px}
+.star[aria-pressed="true"]{color:var(--accent)}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;font-size:12px}
+.bar{height:6px;background:var(--panel-2);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.bars .v{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;min-width:2ch}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;padding:2px 7px;border-radius:4px;background:var(--panel-2);color:var(--muted)}
+.tag.ld{color:var(--accent)}
+.code{display:flex;gap:6px;align-items:center;background:var(--panel-2);border-radius:6px;padding:6px 6px 6px 10px;min-width:0}
+.code code{font:500 12px var(--f-mono);flex:1;min-width:0;overflow-x:auto;white-space:nowrap;user-select:all}
+.copy{font:700 13px var(--f-display);text-transform:uppercase;letter-spacing:.05em;border:0;background:var(--accent);color:var(--accent-ink);padding:5px 10px;border-radius:4px;cursor:pointer;flex:none}
+.note{font-size:13px;color:var(--muted)}
+.empty{color:var(--muted);padding:20px 0}
+
+/* Tier list */
+.tier{display:grid;grid-template-columns:72px 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:10px;background:var(--panel)}
+.tier .t{display:grid;place-items:center;font:800 40px var(--f-display);color:var(--bg)}
+.tier .guns{display:flex;flex-wrap:wrap;gap:8px;padding:12px;min-width:0}
+.pill{background:var(--panel-2);border-radius:6px;padding:6px 10px;display:grid;line-height:1.25;border:1px solid transparent;color:inherit;font:inherit;text-align:left}
+button.pill{cursor:pointer}
+button.pill:hover{border-color:var(--accent)}
+.pill b{font:700 17px var(--f-display);text-transform:uppercase}
+.pill small{color:var(--muted);font-size:12px}
+.pill .has{color:var(--accent);font:500 10px var(--f-mono);text-transform:uppercase;letter-spacing:.06em}
+.t-S{background:var(--s)} .t-A{background:var(--a)} .t-B{background:var(--b)} .t-C{background:var(--c)}
+
+/* Perks */
+.perk-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}
+@media (max-width:760px){.perk-grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
+.panel h3{font:800 22px/1 var(--f-display);text-transform:uppercase;margin:0 0 10px}
+.alloc{display:grid;gap:10px}
+.skill{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center}
+.skill b{font:700 18px var(--f-display);text-transform:uppercase}
+.pips{display:flex;gap:4px}
+.pips i{width:22px;height:6px;border-radius:2px;background:var(--panel-2)}
+.pips i.on{background:var(--accent)}
+.skill p{grid-column:1/-1;margin:0;color:var(--muted);font-size:13px}
+.total{font:500 13px var(--f-mono);color:var(--muted);margin-top:6px}
+.why{margin:12px 0 0;padding-left:18px;color:var(--fg);font-size:14px}
+.why li+li{margin-top:4px}
+.dict{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 16px;margin-top:20px}
+.dict div{font-size:13px;color:var(--muted)}
+.dict b{color:var(--fg);font-weight:600}
+
+/* Maps */
+.maps{display:grid;gap:16px}
+.map{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px}
+@media (max-width:760px){.map{grid-template-columns:1fr}}
+.slot{aspect-ratio:4/3;max-width:100%;border:1px dashed var(--line);border-radius:6px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:13px;background:var(--panel-2);overflow:hidden;position:relative;cursor:pointer}
+.slot img{width:100%;height:100%;object-fit:cover}
+.slot input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.map h3{font:800 28px/1 var(--f-display);text-transform:uppercase;margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:18px;margin:10px 0 12px}
+.stat .n{font:700 26px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.risk{display:inline-block;font:500 11px var(--f-mono);text-transform:uppercase;padding:2px 7px;border-radius:4px;border:1px solid currentColor;margin-left:8px;vertical-align:middle}
+.risk.hi{color:var(--bad)} .risk.mid{color:var(--warn)} .risk.lo{color:var(--good)}
+.spots{width:100%;border-collapse:collapse;font-size:14px}
+.spots th{text-align:left;font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+.spots td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tablewrap{overflow-x:auto}
+.loot{display:flex;gap:2px}
+.loot i{width:10px;height:10px;border-radius:2px;background:var(--panel-2)}
+.loot i.on{background:var(--accent)}
+.tip{margin-top:10px;font-size:13px;color:var(--muted)}
+.tip b{color:var(--fg)}
+
+/* Munitions */
+.ammo{width:100%;border-collapse:collapse;font-size:14px}
+@media (max-width:600px){.ammo th:nth-child(2),.ammo td:nth-child(2){display:none}}
+.ammo th{text-align:left;font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+.ammo td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+.ammo td:first-child{font:700 18px var(--f-display);white-space:nowrap}
+.ammo small{color:var(--muted);font-size:12px}
+.rounds{display:flex;flex-wrap:wrap;gap:6px}
+.round{font:500 12px var(--f-mono);padding:3px 8px;border-radius:4px;background:var(--panel-2);white-space:nowrap}
+.round em{font-style:normal;color:var(--muted)}
+.p6{box-shadow:inset 3px 0 var(--bad)} .p5{box-shadow:inset 3px 0 var(--accent)} .p4{box-shadow:inset 3px 0 var(--a)} .p3{box-shadow:inset 3px 0 var(--c)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:4px;height:12px;vertical-align:-1px;margin-right:6px}
+
+/* Réglages */
+.cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;align-items:start}
+@media (max-width:380px){.cols{grid-template-columns:1fr}}
+.check{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.check:first-of-type{border-top:0}
+.check input{margin:3px 0 0;accent-color:var(--accent);width:16px;height:16px}
+.check b{font-weight:600}
+.check .val{font:500 12px var(--f-mono);color:var(--accent);margin-left:6px;white-space:nowrap}
+.check small{grid-column:2;color:var(--muted);font-size:13px}
+.check:has(input:checked) b{color:var(--muted);text-decoration:line-through}
+.progress{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px}
+.progress .bar{flex:1 1 160px;height:8px}
+.progress span{font:500 13px var(--f-mono);color:var(--muted);white-space:nowrap}
+
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer a{color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.build,.pill{transition:transform .15s}.builds .build:hover{transform:translateY(-2px)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="brand">Ez<span>.</span></div>
+      <div class="sub">Stuffs complets, codes Gunsmith, tier list, perks, maps et munitions pour Arena Breakout: Infinite (PC).</div>
+    </div>
+    <div class="season">Saison 7 · <b>Utopia</b><br>Normal ≤ T4 · Lockdown ≤ T5 · Forbidden ∞<br><button class="theme" id="themeBtn" type="button">Thème : auto</button></div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="stuff">Stuff complet</button>
+    <button role="tab" aria-selected="false" data-tab="builds">Builds</button>
+    <button role="tab" aria-selected="false" data-tab="tier">Tier list</button>
+    <button role="tab" aria-selected="false" data-tab="perks">Perks</button>
+    <button role="tab" aria-selected="false" data-tab="maps">Maps</button>
+    <button role="tab" aria-selected="false" data-tab="ammo">Munitions</button>
+    <button role="tab" aria-selected="false" data-tab="settings">Réglages</button>
+  </nav>
+
+  <!-- STUFF COMPLET -->
+  <section id="stuff" role="tabpanel">
+    <h2>Stuff complet</h2>
+    <p class="lede">Tu choisis le mode, ta façon de jouer et la portée, Ez. te sort un kit prêt à partir : arme avec son code, munition adaptée au cap du mode, protections, rig, sac, soins et perks.</p>
+    <div class="picker" id="picker">
+      <div class="filters" data-k="mode"><span class="flabel">Mode</span>
+        <button class="chip" data-v="normal">Normal</button><button class="chip" data-v="lockdown">Lockdown</button><button class="chip" data-v="forbidden">Forbidden</button></div>
+      <div class="filters" data-k="team"><span class="flabel">Format</span>
+        <button class="chip" data-v="solo">Solo</button><button class="chip" data-v="duo">Duo</button></div>
+      <div class="filters" data-k="style"><span class="flabel">Style</span>
+        <button class="chip" data-v="aggro">Agressif</button><button class="chip" data-v="zero">Sans recul</button><button class="chip" data-v="dmg">Gros dégâts</button><button class="chip" data-v="sniper">Sniper</button><button class="chip" data-v="eq">Équilibré</button></div>
+      <div class="filters" data-k="range"><span class="flabel">Portée</span>
+        <button class="chip" data-v="short">Short</button><button class="chip" data-v="shortmid">Short / Mid</button><button class="chip" data-v="mid">Mid</button><button class="chip" data-v="long">Long</button></div>
+      <div class="filters" data-k="budget"><span class="flabel">Arme ≤</span>
+        <button class="chip" data-v="200">200k</button><button class="chip" data-v="300">300k</button><button class="chip" data-v="400">400k</button><button class="chip" data-v="500">500k</button><button class="chip" data-v="650">650k</button><button class="chip" data-v="9999">Sans limite</button></div>
+    </div>
+    <div class="sumbar">
+      <span class="label" id="ldLabel"></span>
+      <button class="btn" id="ldRoll" type="button">Roulette</button>
+      <button class="btn" id="ldNext" type="button">Autre arme</button>
+      <button class="btn" id="ldLink" type="button">Lien</button>
+      <button class="btn solid" id="ldCopy" type="button">Copier le stuff</button>
+    </div>
+    <div class="loadout">
+      <div class="stack" id="ldWeapons"></div>
+      <div class="stack">
+        <div class="panel"><h3>Kit</h3><div class="slots" id="ldSlots"></div></div>
+        <div class="panel"><h3>Perks</h3><div class="alloc" id="ldPerks"></div></div>
+        <div class="panel"><h3>Pourquoi</h3><ul class="why" id="ldWhy" style="margin:0"></ul></div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:14px">Protections données en classe : les modèles et leurs prix tournent à chaque saison, prends le meilleur de ta classe dispo au marché. Valeurs de pénétration communautaires, à revérifier après patch.</p>
+  </section>
+
+  <!-- BUILDS -->
+  <section id="builds" role="tabpanel" hidden>
+    <h2>Builds</h2>
+    <p class="lede">Codes Gunsmith S7, de 80k à 1,1M. Recul V/H : plus c'est haut, moins l'arme bouge (les bolts sont sur une autre échelle). Prix = build complet, il bouge avec le marché.</p>
+    <div class="filters" id="buildFilters"><span class="flabel">Type</span>
+      <button class="chip" aria-pressed="true" data-f="all">Tout</button>
+      <button class="chip" aria-pressed="false" data-f="ar">Fusils d'assaut</button>
+      <button class="chip" aria-pressed="false" data-f="smg">SMG / PCC</button>
+      <button class="chip" aria-pressed="false" data-f="dmr">DMR</button>
+      <button class="chip" aria-pressed="false" data-f="bolt">Bolt</button>
+      <button class="chip" aria-pressed="false" data-f="lmg">LMG</button>
+      <button class="chip" aria-pressed="false" data-f="zero">Zero recoil</button>
+      <button class="chip" aria-pressed="false" data-f="ld">Lockdown</button>
+      <button class="chip" aria-pressed="false" data-f="fav">★ Favoris</button>
+    </div>
+    <div class="filters last" id="priceFilters"><span class="flabel">Prix</span>
+      <button class="chip" aria-pressed="true" data-p="all">Tous</button>
+      <button class="chip" aria-pressed="false" data-p="0-200">≤ 200k</button>
+      <button class="chip" aria-pressed="false" data-p="201-349">~300k</button>
+      <button class="chip" aria-pressed="false" data-p="350-449">~400k</button>
+      <button class="chip" aria-pressed="false" data-p="450-549">~500k</button>
+      <button class="chip" aria-pressed="false" data-p="550-99999">600k+</button>
+    </div>
+    <div class="toolbar">
+      <input class="input" id="buildSearch" type="search" placeholder="Arme ou calibre (AK, P90, 7.62…)" aria-label="Chercher une arme">
+      <select class="select" id="buildSort" aria-label="Trier les builds">
+        <option value="">Tri par défaut</option>
+        <option value="p">Prix croissant</option>
+        <option value="-p">Prix décroissant</option>
+        <option value="v">Meilleur recul V</option>
+        <option value="h">Meilleur recul H</option>
+        <option value="e">Meilleure ergo</option>
+      </select>
+      <button class="btn solid" id="randomBuild" type="button">Build au hasard</button>
+    </div>
+    <p class="count" id="buildCount"></p>
+    <div class="builds" id="buildList"></div>
+    <p class="note" style="margin-top:14px">Codes ABI Builder. Un code peut casser après un patch : si l'import échoue, monte les pièces à la main depuis la fiche du build.</p>
+  </section>
+
+  <!-- TIER -->
+  <section id="tier" role="tabpanel" hidden>
+    <h2>Tier list S7</h2>
+    <p class="lede">Compilée depuis plusieurs tier lists S7, pondérée pour le Lockdown. Le A545 est annoncé par les devs au niveau du U191 et du H416. Clique une arme marquée « builds » pour voir ses codes.</p>
+    <div id="tierList"></div>
+  </section>
+
+  <!-- PERKS -->
+  <section id="perks" role="tabpanel" hidden>
+    <h2>Perks (Mastery)</h2>
+    <p class="lede">12 points, 6 compétences max, 3 niveaux chacune. Quatre compétences à 3 points valent mieux que six éparpillées.</p>
+    <div class="filters" id="modeFilters">
+      <button class="chip" aria-pressed="true" data-m="solo">Solo</button>
+      <button class="chip" aria-pressed="false" data-m="duo">Duo</button>
+    </div>
+    <div class="filters last" id="styleFilters">
+      <button class="chip" aria-pressed="true" data-s="aggro">Agressif PvP</button>
+      <button class="chip" aria-pressed="false" data-s="loot">Loot / discret</button>
+      <button class="chip" aria-pressed="false" data-s="budget">Run budget</button>
+    </div>
+    <div class="perk-grid">
+      <div class="panel">
+        <div class="label" id="presetLabel">Solo · Agressif PvP</div>
+        <div class="alloc" id="alloc" style="margin-top:12px"></div>
+        <div class="total" id="total"></div>
+      </div>
+      <div class="panel">
+        <div class="label">Pourquoi ce choix</div>
+        <ul class="why" id="why"></ul>
+      </div>
+    </div>
+    <div class="dict" id="dict"></div>
+    <p class="note" style="margin-top:14px">Fire-Retardant Material réduit les « dégâts normaux » subis : lis l'infobulle en jeu. Si ça couvre les balles, il passe devant Marathon. Les Season Core Mastery (Acoustic Earpads, Tactical Belt, Hidden Compartment) se débloquent en cours de saison.</p>
+  </section>
+
+  <!-- MAPS -->
+  <section id="maps" role="tabpanel" hidden>
+    <h2>Maps</h2>
+    <p class="lede">Spots de loot, risque et chiffres clés par map. Clique un cadre pour afficher ta propre capture (elle reste dans ton navigateur).</p>
+    <div class="filters last" id="riskFilters">
+      <button class="chip" aria-pressed="true" data-r="all">Toutes</button>
+      <button class="chip" aria-pressed="false" data-r="mid">Risque moyen</button>
+      <button class="chip" aria-pressed="false" data-r="hi">Risque élevé</button>
+    </div>
+    <div class="maps" id="mapList"></div>
+  </section>
+
+  <!-- MUNITIONS -->
+  <section id="ammo" role="tabpanel" hidden>
+    <h2>Munitions</h2>
+    <p class="lede">Top 3 par calibre, avec pénétration et dégâts. Rappel S7 : plus de pénétration « chanceuse » contre les classes 5 et 6 (armures et rigs blindés) ; il faut d'abord descendre leur durabilité sous un seuil avant de traverser à coup sûr.</p>
+    <div class="panel">
+      <div class="tablewrap"><table class="ammo" id="ammoTable"></table></div>
+      <div class="legend"><span><i style="background:var(--bad)"></i>Pen 60+</span><span><i style="background:var(--accent)"></i>Pen 50–59</span><span><i style="background:var(--a)"></i>Pen 40–49</span><span><i style="background:var(--c)"></i>Pen &lt; 40</span></div>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <h3>À retenir en S7</h3>
+      <ul class="why" id="ammoRules" style="margin:0"></ul>
+    </div>
+  </section>
+
+  <!-- RÉGLAGES -->
+  <section id="settings" role="tabpanel" hidden>
+    <h2>Réglages</h2>
+    <p class="lede">La checklist à repasser après chaque gros patch ou réinstall (les patchs remettent parfois des options à zéro). Ta progression reste enregistrée.</p>
+    <div class="progress"><div class="bar"><i id="setBar" style="width:0%"></i></div><span id="setCount"></span><button class="btn" id="setReset" type="button">Tout décocher</button></div>
+    <div class="cols" id="settingsList"></div>
+  </section>
+
+  <footer>
+    Données compilées en octobre 2026 depuis
+    <a href="https://abibuilder.com/guides/s7-builds" target="_blank" rel="noopener">ABI Builder</a>,
+    <a href="https://timesaver.gg/blog/arena-breakout-infinite-best-guns-season-7" target="_blank" rel="noopener">Timesaver.gg</a>,
+    <a href="https://www.mmoexp.com/News/arena-breakout-infinite-season-7-weapon-tier-list-and-best-loadouts-top-guns-for-lockdown-and-forbidden.html" target="_blank" rel="noopener">MMOexp</a>,
+    <a href="https://qrts.ru/en/games/arena-breakout-infinite/tier/ammo/" target="_blank" rel="noopener">qrts.ru</a>
+    et les guides de arenabreakout-infinite.com. Chiffres communautaires, à vérifier en jeu après chaque patch.
+    Ez. est un site de fan, sans lien avec MoreFun Studios ni Tencent.
+  </footer>
+</div>
+
+<script>
+/* ---------- Stockage local (préfixe ez:) ---------- */
+const store={
+  get(k,d){try{const v=localStorage.getItem("ez:"+k);return v==null?d:JSON.parse(v)}catch(_){return d}},
+  set(k,v){try{localStorage.setItem("ez:"+k,JSON.stringify(v))}catch(_){}}
+};
+const $=id=>document.getElementById(id);
+const pressOnly=(group,el)=>group.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===el));
+const norm=s=>s.toLowerCase().replace(/[^a-z0-9]/g,"");
+
+/* ---------- Thème ---------- */
+const THEMES=["auto","dark","light"],THEMENAME={auto:"auto",dark:"sombre",light:"clair"};
+let theme=store.get("theme","auto");
+function applyTheme(){
+  if(theme==="auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.dataset.theme=theme;
+  $("themeBtn").textContent="Thème : "+THEMENAME[theme];
+}
+$("themeBtn").addEventListener("click",()=>{theme=THEMES[(THEMES.indexOf(theme)+1)%3];store.set("theme",theme);applyTheme()});
+applyTheme();
+
+/* ---------- Copier (délégué) ---------- */
+function copyText(btn,text,label="Copier"){
+  const done=()=>{btn.textContent="Copié";setTimeout(()=>btn.textContent=label,1400)};
+  const fallback=()=>{
+    const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();
+    let ok=false;try{ok=document.execCommand("copy")}catch(_){}
+    ta.remove();ok?done():btn.textContent="Échec";
+  };
+  try{navigator.clipboard.writeText(text).then(done,fallback)}catch(_){fallback()}
+}
+document.addEventListener("click",e=>{const b=e.target.closest(".copy");if(b) copyText(b,b.dataset.code)});
+
+/* ---------- Builds ---------- */
+// c = classe : ar, smg, pcc, carb, dmr, lmg, bolt
+const BUILDS=[
+ {w:"AK-12",n:"Lockdown AK12",p:250,v:83,h:70,e:51,code:"3frmQU2ebDVDlP4Mb",t:["ld","meta"],cal:"5.45",c:"ar"},
+ {w:"AK-12",n:"AK12 Zero Recoil",p:370,v:85,h:75,e:50,code:"3frmQU2ebDVDlP4Tf",t:["ld","zero","meta"],cal:"5.45",c:"ar"},
+ {w:"AK-12",n:"AK12 Budget S7",p:224,v:79,h:66,e:49,code:"Armas Modificadas-3fFj3hAqjqsoxP4rP",t:["ld"],cal:"5.45",c:"ar"},
+ {w:"A545",n:"A545 Zero Recoil",p:430,v:83,h:75,e:63,code:"3frmQU2ebDVDlP4Rf",t:["zero","meta"],cal:"5.45",c:"ar"},
+ {w:"A545",n:"A545 S7 Meta",p:570,v:87,h:81,e:61,code:"3frmQU2ebDVDlP4hf",t:["zero","meta"],cal:"5.45",c:"ar"},
+ {w:"AEK",n:"AEK",p:160,v:67,h:57,e:60,code:"3frmQU2ebDVDlP4rf",t:[],cal:"5.45",c:"ar"},
+ {w:"AEK",n:"AEK Max",p:450,v:84,h:79,e:60,code:"3frmQU2ebDVDlP46f",t:[],cal:"5.45",c:"ar"},
+ {w:"AN-94",n:"AN-94",p:200,v:70,h:62,e:59,code:"3frmQU2ebDVDlP4pf",t:[],cal:"5.45",c:"ar"},
+ {w:"AN-94",n:"AN-94 Full",p:300,v:76,h:75,e:60,code:"3frmQU2ebDVDlP4Eb",t:[],cal:"5.45",c:"ar"},
+ {w:"AK-102",n:"AK-102 Budget",p:100,v:75,h:62,e:52,code:"3frmQU2ebDVDlP4Wf",t:["ld","zero"],cal:"5.56",c:"ar"},
+ {w:"AK-102",n:"AK-102 Full",p:390,v:89,h:85,e:57,code:"3frmQU2ebDVDlP4uf",t:["ld","zero"],cal:"5.56",c:"ar"},
+ {w:"M4A1",n:"M4 Budget",p:160,v:80,h:70,e:48,code:"Armas Modificadas-3fFj3hAqjqsoxP4I4",t:["ld"],cal:"5.56",c:"ar"},
+ {w:"M4A1",n:"M4A1 300k",p:300,v:88,h:76,e:57,code:"3frmQU2ebDVDlP47b",t:["zero"],cal:"5.56",c:"ar"},
+ {w:"M4A1",n:"M4A1 All-Rounder",p:330,v:89,h:79,e:56,code:"Mod Gun-3fQnDljWViWozP4yP",t:["ld","zero","meta"],cal:"5.56",c:"ar"},
+ {w:"M4A1",n:"M4A1 Meta",p:450,v:84,h:76,e:62,code:"3frmQU2ebDVDlP4jf",t:["zero","meta"],cal:"5.56",c:"ar"},
+ {w:"FAMAS",n:"FAMAS Budget",p:120,v:82,h:57,e:53,code:"3frmQU2ebDVDlP4Cf",t:["ld","zero"],cal:"5.56",c:"ar"},
+ {w:"FAMAS",n:"Full Opt Famas",p:380,v:84,h:64,e:48,code:"Mod Gun-3fUf7o63Z1TyAP4Rb",t:["meta"],cal:"5.56",c:"ar"},
+ {w:"FAMAS",n:"FAMAS Meta",p:480,v:90,h:66,e:48,code:"3frmQU2ebDVDlP44f",t:["zero","meta"],cal:"5.56",c:"ar"},
+ {w:"H416",n:"HK416 Budget",p:280,v:82,h:62,e:68,code:"3frmQU2ebDVDlP4Lf",t:["meta"],cal:"5.56",c:"ar"},
+ {w:"H416",n:"HK416 Zero Recoil",p:600,v:91,h:78,e:66,code:"3frmQU2ebDVDlP4Xf",t:["zero","meta"],cal:"5.56",c:"ar"},
+ {w:"AUG",n:"AUG Budget",p:170,v:74,h:64,e:69,code:"3frmQU2ebDVDlP4if",t:["ld"],cal:"5.56",c:"ar"},
+ {w:"AUG",n:"AUG 300k",p:300,v:80,h:73,e:61,code:"3frmQU2ebDVDlP4wf",t:[],cal:"5.56",c:"ar"},
+ {w:"M16",n:"M16 Budget",p:250,v:78,h:62,e:50,code:"3frmQU2ebDVDlP41f",t:["ld"],cal:"5.56",c:"carb"},
+ {w:"M16",n:"M16 Max",p:380,v:77,h:66,e:48,code:"3frmQU2ebDVDlP4af",t:[],cal:"5.56",c:"carb"},
+ {w:"AR-57",n:"AR-57 Budget",p:180,v:80,h:68,e:57,code:"3frmQU2ebDVDlP4lf",t:["ld","zero","meta"],cal:"5.7",c:"ar"},
+ {w:"AR-57",n:"AR-57 Meta",p:600,v:88,h:89,e:58,code:"3frmQU2ebDVDlP4Vf",t:["ld","zero","meta"],cal:"5.7",c:"ar"},
+ {w:"T951",n:"T951 Budget",p:120,v:84,h:64,e:57,code:"3frmQU2ebDVDlP4Bf",t:["ld"],cal:"5.8",c:"ar"},
+ {w:"T951",n:"T951 Meta",p:300,v:89,h:74,e:48,code:"3frmQU2ebDVDlP4Sf",t:["ld","meta"],cal:"5.8",c:"ar"},
+ {w:"T191",n:"Meta T191",p:550,v:79,h:67,e:65,code:"3frmQU2ebDVDlP4Bb",t:["meta"],cal:"5.8",c:"ar"},
+ {w:"T192",n:"Meta T192",p:580,v:81,h:73,e:86,code:"3frmQU2ebDVDlP4Cb",t:["meta"],cal:"5.8",c:"ar"},
+ {w:"ACE31",n:"ACE31 Budget",p:80,v:60,h:46,e:60,code:"3frmQU2ebDVDlP4cf",t:[],cal:"7.62x39",c:"ar"},
+ {w:"ACE31",n:"ACE31 Max",p:250,v:72,h:66,e:59,code:"3frmQU2ebDVDlP4Gf",t:[],cal:"7.62x39",c:"ar"},
+ {w:"AK15SC",n:"AK15SC",p:150,v:73,h:69,e:68,code:"3frmQU2ebDVDlP49f",t:[],cal:"7.62x39",c:"ar"},
+ {w:"AK15SC",n:"AK15SC Full",p:300,v:75,h:76,e:66,code:"3frmQU2ebDVDlP4qf",t:[],cal:"7.62x39",c:"ar"},
+ {w:"ZC-807",n:"ZC-807",p:130,v:78,h:69,e:64,code:"3frmQU2ebDVDlP4Do",t:[],cal:"",c:"ar"},
+ {w:"ZC-807",n:"ZC-807 Full",p:320,v:82,h:81,e:48,code:"3frmQU2ebDVDlP4Oo",t:[],cal:"",c:"ar"},
+ {w:"FAL",n:"FAL Budget",p:150,v:69,h:64,e:48,code:"3frmQU2ebDVDlP42f",t:["ld"],cal:"7.62x51",c:"ar"},
+ {w:"FAL",n:"FAL Burst Kit",p:540,v:73,h:76,e:51,code:"3frmQU2ebDVDlP4of",t:[],cal:"7.62x51",c:"ar"},
+ {w:"RPK-16",n:"RPK-16",p:250,v:71,h:52,e:51,code:"3frmQU2ebDVDlP44o",t:[],cal:"5.45",c:"lmg"},
+ {w:"RPK-16",n:"RPK-16 Full",p:500,v:82,h:77,e:60,code:"3frmQU2ebDVDlP4Po",t:[],cal:"5.45",c:"lmg"},
+ {w:"P90",n:"P90 Leg Meta",p:220,v:80,h:81,e:70,code:"3frmQU2ebDVDlP48f",t:["ld","zero","meta"],cal:"5.7",c:"smg"},
+ {w:"P90",n:"P90 Full",p:540,v:87,h:90,e:76,code:"3frmQU2ebDVDlP4lb",t:["zero","meta"],cal:"5.7",c:"smg"},
+ {w:"MPX",n:"MPX",p:270,v:82,h:71,e:76,code:"3frmQU2ebDVDlP4ib",t:[],cal:"9x19",c:"smg"},
+ {w:"MPX",n:"MPX Dum-Dum S7",p:450,v:86,h:80,e:66,code:"3frmQU2ebDVDlP4zf",t:["ld","zero"],cal:"9x19",c:"smg"},
+ {w:"Vector 45",n:"Vector Budget",p:120,v:75,h:69,e:60,code:"3frmQU2ebDVDlP4nf",t:["ld"],cal:".45",c:"smg"},
+ {w:"Vector 45",n:"Vector Meta",p:350,v:88,h:89,e:69,code:"3frmQU2ebDVDlP46b",t:["zero"],cal:".45",c:"smg"},
+ {w:"Banshee",n:"Banshee",p:330,v:74,h:63,e:64,code:"3frmQU2ebDVDlP4kf",t:[],cal:"",c:"smg"},
+ {w:"Banshee",n:"Banshee Full",p:570,v:88,h:92,e:63,code:"3frmQU2ebDVDlP4yf",t:["zero"],cal:"",c:"smg"},
+ {w:"PCC-9",n:"PCC-9",p:113,v:80,h:69,e:73,code:"3frmQU2ebDVDlP4Zf",t:[],cal:"9x19",c:"pcc"},
+ {w:"PCC-9",n:"PCC-9 Full Auto",p:450,v:92,h:90,e:74,code:"3frmQU2ebDVDlP4tf",t:["zero"],cal:"9x19",c:"pcc"},
+ {w:"VSS",n:"VSS",p:250,v:76,h:63,e:55,code:"3frmQU2ebDVDlP4gf",t:[],cal:"9x39",c:"dmr"},
+ {w:"VSS",n:"VSS Full",p:378,v:77,h:68,e:51,code:"3frmQU2ebDVDlP4If",t:[],cal:"9x39",c:"dmr"},
+ {w:"Mk14",n:"MK14",p:300,v:66,h:70,e:49,code:"3frmQU2ebDVDlP4Hf",t:[],cal:"7.62x51",c:"dmr"},
+ {w:"Mk14",n:"Meta MK14",p:460,v:70,h:78,e:51,code:"3frmQU2ebDVDlP4Wb",t:["meta"],cal:"7.62x51",c:"dmr"},
+ {w:"U191",n:"U191 Budget",p:300,v:69,h:58,e:41,code:"3frmQU2ebDVDlP4sf",t:[],cal:"5.8",c:"dmr"},
+ {w:"U191",n:"U191 Meta",p:615,v:75,h:73,e:39,code:"3frmQU2ebDVDlP4mb",t:["meta"],cal:"5.8",c:"dmr"},
+ {w:"SVDS",n:"SVDS",p:500,v:35,h:39,e:47,code:"3frmQU2ebDVDlP40f",t:[],cal:"7.62x54R",c:"dmr"},
+ {w:"SVDS",n:"SVDS Full",p:800,v:46,h:51,e:44,code:"3frmQU2ebDVDlP4Mf",t:[],cal:"7.62x54R",c:"dmr"},
+ {w:"M24",n:"M24",p:320,v:12,h:21,e:32,code:"3frmQU2ebDVDlP4zo",t:[],cal:"7.62x51",c:"bolt"},
+ {w:"M24",n:"M24 Full",p:700,v:18,h:36,e:44,code:"3frmQU2ebDVDlP4Ao",t:["meta"],cal:"7.62x51",c:"bolt"},
+ {w:"SJ16",n:"SJ16",p:700,v:11,h:15,e:22,code:"3frmQU2ebDVDlP4fo",t:[],cal:"",c:"bolt"},
+ {w:"SJ16",n:"SJ16 Full",p:1101,v:18,h:25,e:26,code:"3frmQU2ebDVDlP4bo",t:["meta"],cal:"",c:"bolt"}
+];
+const TAGLABEL={ld:"Lockdown",zero:"Zero recoil",meta:"Meta"};
+const CLS={ar:"Fusil d'assaut",smg:"SMG",pcc:"PCC",carb:"Carabine",dmr:"DMR",lmg:"LMG",bolt:"Bolt"};
+const kfmt=p=>p>=1000?(p/1000).toLocaleString("fr-FR",{maximumFractionDigits:2})+"M":p+"k";
+
+function buildCard(b,{fav=true,hl=false,title=""}={}){
+  const f=favs.has(b.code);
+  return `<article class="build${hl?" hl":""}" data-code="${b.code}">
+     ${title?`<div class="label">${title}</div>`:""}
+     <div class="build-head"><div><div class="gun">${b.w}</div><div class="bname">${b.n}${b.cal?" · "+b.cal:""} · ${CLS[b.c]}</div></div>
+       <div class="price">~${kfmt(b.p)}${fav?`<button class="star" aria-pressed="${f}" aria-label="Favori ${b.n}" data-fav="${b.code}">${f?"★":"☆"}</button>`:""}</div></div>
+     <div class="bars">
+       <span>Recul V</span><div class="bar"><i style="width:${b.v}%"></i></div><span class="v">${b.v}</span>
+       <span>Recul H</span><div class="bar"><i style="width:${b.h}%"></i></div><span class="v">${b.h}</span>
+       <span>Ergo</span><div class="bar"><i style="width:${b.e}%"></i></div><span class="v">${b.e}</span>
+     </div>
+     ${b.t.length?`<div class="tags">${b.t.map(t=>`<span class="tag ${t==="ld"?"ld":""}">${TAGLABEL[t]}</span>`).join("")}</div>`:""}
+     <div class="code"><code>${b.code}</code><button class="copy" data-code="${b.code}">Copier</button></div>
+   </article>`;
+}
+
+let bFilter="all",bPrice="all",bQuery="",bSort="",favs=new Set(store.get("favs",[])),hl=null;
+function visibleBuilds(){
+  const q=norm(bQuery);
+  const [lo,hi]=bPrice==="all"?[0,1e9]:bPrice.split("-").map(Number);
+  let keep=BUILDS.filter(b=>
+    (bFilter==="all"||(bFilter==="fav"&&favs.has(b.code))||(bFilter==="smg"&&(b.c==="smg"||b.c==="pcc"))||(bFilter==="ar"&&(b.c==="ar"||b.c==="carb"))||b.c===bFilter||b.t.includes(bFilter))
+    &&b.p>=lo&&b.p<=hi
+    &&(!q||norm(b.w+b.n+b.cal).includes(q)));
+  if(bSort==="p") keep=[...keep].sort((a,b)=>a.p-b.p);
+  else if(bSort==="-p") keep=[...keep].sort((a,b)=>b.p-a.p);
+  else if(bSort) keep=[...keep].sort((a,b)=>b[bSort]-a[bSort]);
+  return keep;
+}
+function renderBuilds(){
+  const keep=visibleBuilds();
+  $("buildCount").textContent=`${keep.length} build${keep.length>1?"s":""}`;
+  $("buildList").innerHTML=keep.length?keep.map(b=>buildCard(b,{hl:hl===b.code})).join("")
+    :`<p class="empty">${bFilter==="fav"?"Aucun favori : clique ☆ sur un build.":"Aucun build ne correspond."}</p>`;
+}
+document.addEventListener("click",e=>{
+  const star=e.target.closest(".star"); if(!star) return;
+  const c=star.dataset.fav;favs.has(c)?favs.delete(c):favs.add(c);store.set("favs",[...favs]);
+  renderBuilds();renderLoadout();
+});
+$("buildFilters").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;pressOnly($("buildFilters"),c);bFilter=c.dataset.f;hl=null;renderBuilds()});
+$("priceFilters").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;pressOnly($("priceFilters"),c);bPrice=c.dataset.p;hl=null;renderBuilds()});
+$("buildSearch").addEventListener("input",e=>{bQuery=e.target.value;hl=null;renderBuilds()});
+$("buildSort").addEventListener("change",e=>{bSort=e.target.value;renderBuilds()});
+$("randomBuild").addEventListener("click",()=>{
+  const pool=visibleBuilds().length?visibleBuilds():BUILDS;
+  let pick; do{pick=pool[Math.floor(Math.random()*pool.length)]}while(pool.length>1&&pick.code===hl);
+  hl=pick.code; renderBuilds();
+  document.querySelector(`#buildList .build[data-code="${CSS.escape(hl)}"]`)?.scrollIntoView({behavior:"smooth",block:"center"});
+});
+
+/* ---------- Tier list ---------- */
+const TIERS=[
+ ["S",[["A545","Nouveau, top tier"],["H416","Laser malgré le nerf"],["AK-12","Roi du Lockdown"],["U191","DMR premium"],["P90","Meilleur SMG"],["M24","One-tap casque T6"]]],
+ ["A",[["AR-57","S en Lockdown"],["FAL + kit S7","Buff + recoil kit"],["AK-102","Prix / perf"],["T951","Rapport qualité / prix"],["SJ16","One-shot longue portée"],["Mk14","DMR full-auto"],["SVDS","Semi-auto Forbidden"],["RPK-16","5.45 pas cher"],["AMB-17","Lockdown budget"]]],
+ ["B",[["M4A1","Moddable, moins de dégâts"],["FAMAS","DPS, chargeur 25"],["MPX + Vulcan","Leg meta"],["AUG","Budget, chargeur court"],["AN-94","AK-12 budget"],["ACE31","Sous-coté"],["AEK","Recul pénible"],["VSS","Buffé, faible portée"],["T191 / T192","U191 compact"],["MCX","Stable"]]],
+ ["C",[["MP5","Budget pur"],["UMP45","Dépassé"],["PP-19","Dépassé"],["Mini14","Semi-auto"],["SKS","Starter"],["Mosin","Starter"],["MDR","Peu joué"]]]
+];
+const weaponKey=n=>{const k=norm(n.split(" ")[0]);return BUILDS.find(b=>norm(b.w).startsWith(k)||k.startsWith(norm(b.w)))?.w};
+$("tierList").innerHTML=TIERS.map(([t,g])=>`
+ <div class="tier"><div class="t t-${t}">${t}</div><div class="guns">${g.map(([n,d])=>{
+   const w=weaponKey(n);
+   return w?`<button class="pill" data-w="${w}"><b>${n}</b><small>${d}</small><span class="has">→ builds</span></button>`
+           :`<div class="pill"><b>${n}</b><small>${d}</small></div>`}).join("")}</div></div>`).join("");
+$("tierList").addEventListener("click",e=>{
+  const p=e.target.closest("button.pill"); if(!p) return;
+  bFilter="all";bPrice="all";
+  pressOnly($("buildFilters"),$("buildFilters").querySelector('[data-f="all"]'));
+  pressOnly($("priceFilters"),$("priceFilters").querySelector('[data-p="all"]'));
+  bQuery=p.dataset.w;$("buildSearch").value=bQuery;hl=null;renderBuilds();show("builds");scrollTo({top:0});
+});
+
+/* ---------- Perks ---------- */
+const SKILLS={
+ "Focus Puller":"Lean et recentrage plus rapides",
+ "Veteran":"Moins de sway quand tu prends des balles",
+ "Emergency Evasion":"Vitesse en plus après une touche",
+ "Marathon":"Endurance des jambes qui revient plus vite",
+ "Battlefield Healing":"Relève plus vite, plus de PV au relevé",
+ "Stay Alive":"Plus mobile et plus de PV une fois à terre",
+ "Effective Looting":"Chance de sauter la fouille des conteneurs",
+ "Porter":"Charge max augmentée",
+ "Heavy Motor":"Moins de malus de mouvement avec l'armure",
+ "Vinson's Friend I":"Chance de récupérer ton arme si tu meurs",
+ "Vinson's Friend II":"Chance de récupérer ton armure si tu meurs",
+ "Sleight of Hand":"Remplissage des chargeurs plus rapide",
+ "Iron Arm":"Endurance des bras qui revient plus vite",
+ "Fire-Retardant Material":"Réduit les dégâts normaux subis",
+ "Pharmacist":"Médocs et stims durent plus longtemps",
+ "Quick Seal":"Les plaies se referment avec le temps",
+ "Jump Weapon Control":"Arme plus stable en sautant"
+};
+const PRESETS={
+ solo:{
+  aggro:{s:["Focus Puller","Veteran","Emergency Evasion","Marathon"],w:["Focus Puller : tu gagnes les peeks sur les angles.","Veteran : ta visée reste stable quand l'autre tire en premier.","Emergency Evasion : tu sors d'un mauvais échange avant de tomber.","Marathon : tu rotates et reprends position sans être à sec."]},
+  loot:{s:["Effective Looting","Porter","Marathon","Emergency Evasion"],w:["Effective Looting : moins de temps immobile devant les caisses.","Porter : tu ressors plus chargé sans être ralenti.","Marathon : tu traverses la map vite entre deux spots.","Emergency Evasion : tu décroches si on te surprend."]},
+  budget:{s:["Vinson's Friend I","Vinson's Friend II","Veteran","Emergency Evasion"],w:["Vinson's Friend I et II : chance de récupérer arme et armure quand tu meurs, parfait pour enchaîner les kits.","Veteran : tu restes compétitif même avec un kit moyen.","Emergency Evasion : une chance de plus de survivre au premier contact."]}
+ },
+ duo:{
+  aggro:{s:["Focus Puller","Veteran","Battlefield Healing","Emergency Evasion"],w:["Battlefield Healing : relever ton mate vite gagne les fights à 2v2.","Focus Puller et Veteran : les deux perks de duel.","Emergency Evasion : tu te mets à couvert pour attendre le relevé."]},
+  loot:{s:["Battlefield Healing","Effective Looting","Porter","Stay Alive"],w:["Battlefield Healing et Stay Alive : à terre, tu tiens assez longtemps pour être relevé.","Effective Looting et Porter : un looteur pendant que l'autre couvre.","Répartissez les rôles : un des deux peut prendre le preset agressif."]},
+  budget:{s:["Vinson's Friend I","Vinson's Friend II","Battlefield Healing","Veteran"],w:["Vinson's Friend I et II : vous amortissez les pertes de kit.","Battlefield Healing : en duo, un relevé rapide évite de perdre le kit.","Veteran : la stabilité compense le matos moyen."]}
+ }
+};
+let mode="solo",style="aggro";
+const STYLENAME={aggro:"Agressif PvP",loot:"Loot / discret",budget:"Run budget"};
+const skillRows=list=>list.map(n=>`<div class="skill"><b>${n}</b><span class="pips"><i class="on"></i><i class="on"></i><i class="on"></i></span><p>${SKILLS[n]}</p></div>`).join("");
+function renderPerks(){
+  const p=PRESETS[mode][style];
+  $("presetLabel").textContent=(mode==="solo"?"Solo":"Duo")+" · "+STYLENAME[style];
+  $("alloc").innerHTML=skillRows(p.s);
+  $("total").textContent=`${p.s.length*3} / 12 points · ${p.s.length} / 6 compétences`;
+  $("why").innerHTML=p.w.map(x=>`<li>${x}</li>`).join("");
+}
+$("dict").innerHTML=Object.entries(SKILLS).map(([k,v])=>`<div><b>${k}</b> · ${v}</div>`).join("");
+$("modeFilters").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;mode=c.dataset.m;pressOnly($("modeFilters"),c);renderPerks()});
+$("styleFilters").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;style=c.dataset.s;pressOnly($("styleFilters"),c);renderPerks()});
+
+/* ---------- Maps ---------- */
+const MAPS=[
+ {n:"Farm",risk:"mid",rl:"Moyen",modes:"Normal · Lockdown · Forbidden · Infected",stats:[["12","extractions"],["9","clés"],["2","boss"]],
+  spots:[["Motel","Safes, chambres à clé (201, Main Guest Room)",5,"Très disputé"],["Stables","Safe ouvert, caisse d'armes",4,"Boss Ajax possible"],["Grain Trade Center","Munitions, provisions, craft",3,"Pièce fermée au 1er"],["Villa","Caisses, côté nord",3,"Calme en début de raid"]],
+  tip:"<b>Route ouest :</b> Grain Trade → Stables → Motel. Évite de traverser l'autoroute à découvert."},
+ {n:"Valley",risk:"mid",rl:"Moyen",modes:"Normal · Lockdown · Infected (Lockdown)",stats:[["11","extractions"],["10","clés"],["1","boss"]],
+  spots:[["Beach Villa","2 safes + une dizaine de caisses",5,"Hotspot du sud"],["Port","1 safe + caisses dans l'entrepôt",4,"Loot regroupé, rapide"],["Noan Courtyard","Villa sur la colline + camp à l'est",4,"Vue sur une grosse partie de la map"]],
+  tip:"<b>Extract conditionnels :</b> l'hélipad demande un token du boss, l'Abandoned RV une boîte à outils."},
+ {n:"Northridge",risk:"mid",rl:"Moyen",modes:"Normal · Lockdown",stats:[["8","safes à l'hôtel"],["16+","safes au total"]],
+  spots:[["Northridge Hotel","8 safes sur 4 bâtiments",5,"Le plus rentable, très joué"],["Sewage Plant","3 safes, loot industriel",3,"Plus calme, bon en solo"],["Cable Car Station","3 safes",3,"Route nord"],["Camp Services","2 safes",2,"Départ ouest"]],
+  tip:"<b>Spawn SW Camp :</b> fonce sur l'hôtel par le trou du mur du bâtiment B. Spawn Parking : Cable Car puis Communication Station."},
+ {n:"Armory",risk:"hi",rl:"Élevé",modes:"Lockdown · Forbidden",stats:[["5+","extracts courants"]],
+  spots:[["Bunker central","Salles à keycard, safes électroniques",5,"PvP dès le début"],["Complexes extérieurs","Safes, sacs, valises",3,"Moins exposé"]],
+  tip:"<b>Prépare ton extract :</b> B1 Canal (levier), Radar Station Tunnel et Underground Mine dépendent d'interrupteurs. Map CQB : SMG ou AR-57."},
+ {n:"TV Station",risk:"hi",rl:"Élevé",modes:"Lockdown · Forbidden",stats:[["3","extractions"],["17","spawns"]],
+  spots:[["Central Control Room","2 safes, loot élite (RDC)",5,"Rush PvP la 1re minute"],["Director's Office","Top loot (1er étage)",5,"Campé en permanence"],["General Office","Beaucoup de loot, 3 accès",4,"Embuscades fréquentes"]],
+  tip:"<b>Spawn Back Stairwell :</b> départ calme mais pauvre, rotate tout de suite. Map la plus sweaty avec Armory."},
+ {n:"Airport",risk:"hi",rl:"Élevé",modes:"Forbidden · Infected (Heavy) · Zombie Endless",stats:[["Lv.8","Zombie Endless"]],
+  spots:[["Fuel Storage","Électronique, objets de valeur",4,"Bon en Forbidden"],["Exhibition","Objets de valeur",4,"Bon en Forbidden"],["Tour de contrôle","Objectif Infected Zone",3,"Zombies"]],
+  tip:"<b>Saison 7 :</b> les zombies remplacent la plupart des IA en Forbidden Airport. Prends de la munition pas chère pour eux."}
+];
+const imgs={};let riskF="all";
+function renderMaps(){
+  $("mapList").innerHTML=MAPS.map((m,i)=>riskF!=="all"&&m.risk!==riskF?"":`
+   <article class="map">
+     <label class="slot" for="mapimg-${i}">${imgs[i]?`<img src="${imgs[i]}" alt="Carte ${m.n}">`:`<span>Ajoute ta capture<br>de ${m.n}</span>`}<input type="file" id="mapimg-${i}" accept="image/*" data-i="${i}"></label>
+     <div style="min-width:0">
+       <h3>${m.n}<span class="risk ${m.risk}">Risque ${m.rl}</span></h3>
+       <div class="label" style="margin-top:6px">${m.modes}</div>
+       <div class="stats">${m.stats.map(([n,l])=>`<div class="stat"><div class="n">${n}</div><div class="label">${l}</div></div>`).join("")}</div>
+       <div class="tablewrap"><table class="spots"><thead><tr><th>Spot</th><th>Loot</th><th>Valeur</th><th>Note</th></tr></thead><tbody>
+         ${m.spots.map(([s,l,v,n])=>`<tr><td><b>${s}</b></td><td>${l}</td><td><span class="loot" aria-label="${v} sur 5">${[1,2,3,4,5].map(k=>`<i class="${k<=v?"on":""}"></i>`).join("")}</span></td><td>${n}</td></tr>`).join("")}
+       </tbody></table></div>
+       <p class="tip">${m.tip}</p>
+     </div>
+   </article>`).join("");
+}
+$("mapList").addEventListener("change",e=>{
+  const inp=e.target; if(!inp.files||!inp.files[0]) return;
+  const r=new FileReader(); r.onload=()=>{imgs[inp.dataset.i]=r.result;renderMaps()}; r.readAsDataURL(inp.files[0]);
+});
+$("riskFilters").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;riskF=c.dataset.r;pressOnly($("riskFilters"),c);renderMaps()});
+
+/* ---------- Munitions ---------- */
+// [nom, pénétration, dégâts], triées de la meilleure pen à la moins bonne
+const AMMO={
+ "5.45":[["BS",52,40],["BP",41,45],["PP",31,44]],
+ "5.56":[["M995",52,41],["M855A1",40,44],["M855",34,50]],
+ "5.7":[["SS198",53,43],["SS190",42,47],["L191",32,55]],
+ "5.8":[["DVC12",53,44],["DVP88",44,37],["DBP87",34,52]],
+ "7.62x39":[["AP",54,45],["BP",45,55],["PS",33,55]],
+ "7.62x51":[["M61",68,50],["M62",53,56],["M80",42,63]],
+ "7.62x54R":[["7N37",71,50],["SNB",63,67],["7BT1",54,72]],
+ "9x19":[["7N31",40,44],["AP6.3",30,46],["Pst",20,50]],
+ "9x39":[["7N12",50,50],["7N9",47,56],["SP6",41,53]],
+ ".45":[["APWC",42,48],["AP",32,48],["FMJ",19,54]],
+ ".338":[["AP",64,90],["FMJ",54,94],["UPZ",42,110]]
+};
+const penCls=p=>p>=60?"p6":p>=50?"p5":p>=40?"p4":"p3";
+$("ammoTable").innerHTML=`<thead><tr><th>Calibre</th><th>Armes</th><th>Top munitions (pen / dégâts)</th></tr></thead><tbody>`+
+ Object.entries(AMMO).map(([cal,r])=>{
+   const guns=[...new Set(BUILDS.filter(b=>b.cal===cal).map(b=>b.w))].join(", ");
+   return `<tr><td>${cal}</td><td><small>${guns||"—"}</small></td><td><div class="rounds">${r.map(([n,p,d])=>`<span class="round ${penCls(p)}">${n} <em>${p} / ${d}</em></span>`).join("")}</div></td></tr>`}).join("")+"</tbody>";
+$("ammoRules").innerHTML=[
+ "Caps de mode : Normal ≤ T4, Lockdown ≤ T5, Forbidden sans limite. Le générateur de stuff en tient compte.",
+ "Contre classe 6 en Forbidden : il faut de la pen 60+ (M61, 7N37, SNB, .338 AP) ou passer par les jambes.",
+ "Pen ~52 (BS, M995, SS198, DVC12, 7.62x39 AP) : le standard Lockdown. Contre classe 5 neuve, compte sur l'usure avant de traverser.",
+ "Les dégâts pleins ne passent que si la balle traverse : une munition à gros dégâts mais faible pen, c'est pour les jambes et les IA.",
+ "Un 2e chargeur en munition bas de gamme pour les IA et les zombies économise la bonne munition pour le PvP."
+].map(x=>`<li>${x}</li>`).join("");
+
+/* ---------- Stuff complet ---------- */
+const DMG={".338":5,"7.62x54R":5,"7.62x51":4,"9x39":3,"7.62x39":3,"5.8":2,"5.45":2,"5.56":2,"5.7":1,".45":1,"9x19":0};
+const dmgOf=b=>DMG[b.cal]??(b.c==="bolt"?5:b.c==="dmr"?4:2);
+// Classes compatibles par portée (hors sniper)
+const RANGE_OK={
+  short:b=>["smg","pcc"].includes(b.c)||(b.c==="ar"&&b.e>=57),
+  shortmid:b=>["ar","carb","smg","pcc"].includes(b.c),
+  mid:b=>["ar","carb","lmg","dmr"].includes(b.c),
+  long:b=>["dmr","lmg"].includes(b.c)||(b.c==="ar"&&b.v>=82)
+};
+const RANGENAME={short:"Short",shortmid:"Short / Mid",mid:"Mid",long:"Long"};
+const MODENAME={normal:"Normal",lockdown:"Lockdown",forbidden:"Forbidden"};
+const STYLE2={aggro:"Agressif",zero:"Sans recul",dmg:"Gros dégâts",sniper:"Sniper",eq:"Équilibré"};
+const AMMO_CAP={normal:47,lockdown:54,forbidden:999}; // pen max estimée par cap de tier
+
+let ld=Object.assign({mode:"lockdown",team:"solo",style:"aggro",range:"shortmid",budget:"500"},store.get("loadout",{}));
+let ldAlt=0;
+const TIERBONUS={S:30,A:15,B:0,C:-10};
+const TIER_OF={};TIERS.forEach(([t,g])=>g.forEach(([n])=>{const w=weaponKey(n);if(w&&!TIER_OF[w])TIER_OF[w]=t}));
+const tierOf=w=>TIER_OF[w];
+
+function score(b){
+  const rec=b.v+b.h,d=dmgOf(b);let s;
+  switch(ld.style){
+    case "aggro": s=b.e*1.4+rec*0.8+(["smg","pcc"].includes(b.c)&&ld.range==="short"?12:0);break;
+    case "zero": s=rec*2+b.e*0.2;break;
+    case "dmg": s=d*45+rec*0.6;break;
+    case "sniper": s=(b.c==="bolt"?60:0)+d*30+rec*0.5+(b.c==="bolt"&&ld.range!=="long"?-40:0);break;
+    default: s=rec+b.e*0.6;
+  }
+  s+=TIERBONUS[tierOf(b.w)]??0;
+  if(b.t.includes("meta")) s+=8;
+  const am=pickAmmo(b.cal);
+  if(am) s+=(am.best[1]-46)*{normal:0.3,lockdown:1,forbidden:2}[ld.mode]*(ld.style==="zero"?0.4:1);
+  if(ld.range==="shortmid"&&["smg","pcc"].includes(b.c)) s-=15;
+  if(ld.mode==="lockdown"&&b.t.includes("ld")) s+=12;
+  if(ld.mode==="forbidden") s+=d*8;
+  if(ld.mode==="normal") s-=b.p*0.03;
+  if(favs.has(b.code)) s+=5;
+  return s;
+}
+function pickPrimary(){
+  const budget=+ld.budget;
+  const fits=b=>ld.style==="sniper"?["bolt","dmr"].includes(b.c):(b.c!=="bolt"&&RANGE_OK[ld.range](b));
+  let pool=BUILDS.filter(fits),over=false;
+  let inBudget=pool.filter(b=>b.p<=budget);
+  if(!inBudget.length){over=true;inBudget=[...pool].sort((a,b)=>a.p-b.p).slice(0,3)}
+  const ranked=inBudget.sort((a,b)=>score(b)-score(a));
+  const seen=new Set(),uniq=[];
+  for(const b of ranked){if(!seen.has(b.w)){seen.add(b.w);uniq.push(b)}}
+  return {list:uniq,over};
+}
+function pickSecondary(primary){
+  if(!["bolt","dmr"].includes(primary.c)) return null;
+  const cap=Math.max(130,Math.min(350,+ld.budget*0.5));
+  return BUILDS.filter(b=>["smg","pcc"].includes(b.c)&&b.p<=cap).sort((a,b)=>(b.e+b.v+b.h)-(a.e+a.v+a.h))[0]||null;
+}
+function pickAmmo(cal){
+  const r=AMMO[cal]; if(!r) return null;
+  const cap=AMMO_CAP[ld.mode];
+  return {best:r.find(x=>x[1]<=cap)||r[r.length-1],cheap:r[r.length-1]};
+}
+function gear(primary){
+  const m=ld.mode,sn=ld.style==="sniper",ag=ld.style==="aggro",duo=ld.team==="duo";
+  const cls={normal:4,lockdown:5,forbidden:6}[m];
+  const armor=sn&&m!=="normal"?cls-1:cls;
+  const rows=[];
+  rows.push(["Casque",`Classe ${cls}${m==="forbidden"?" avec visière (ou classe 5 + face cover ≥ 4)":""}`,m==="forbidden"?"Un headshot finit le raid : c'est la pièce à ne jamais rogner.":"Le meilleur de ta classe : souvent plus rentable que monter l'armure d'un cran."]);
+  if(m!=="normal") rows.push(["Face cover",m==="forbidden"?"Classe 4 minimum":"Classe 4 si dispo",""]);
+  rows.push(["Armure",`Classe ${armor}${sn&&m!=="normal"?" (plus légère pour bouger entre les angles)":""}`,armor===6?"Depuis la S7, classe 6 = plus de pen « chanceuse » contre toi.":armor===5?(m==="lockdown"?"Classe 5 = ton cheval de bataille en Lockdown.":"Classe 5 : pas de pen chanceuse non plus depuis la S7, et tu restes mobile."):sn?"Plus légère : tu changes de spot sans être ralenti.":"Cap T4 : pas besoin de plus."]);
+  rows.push(["Rig",ag?"Chest rig 6+ chargeurs (type B4 Tactical) + grenades":m==="forbidden"?"B4 Tactical Chest Rig ou mieux":"Rig 4+ chargeurs",ag?"Tu recharges en fight, pas dans le sac.":""]);
+  rows.push(["Casque audio","Commander A Tactical Headset","Le son gagne le fight avant le premier tir."]);
+  rows.push(["Sac",ag?"Petit (≤ 25 cases)":sn?"Moyen (type RUSH Tactical)":m==="forbidden"?"RUSH Tactical ou plus":"Moyen à gros",ag?"Tu viens pour tuer, pas pour fouiller : reste mobile.":""]);
+  const meds={normal:"2 bandages · 1 trousse · 1 attelle · 1 antidouleur",lockdown:"3 bandages · 1 grosse trousse · 1 kit chirurgical · 2 antidouleurs",forbidden:"4 bandages · 2 trousses · 1 kit chirurgical · 2 antidouleurs · boosters"}[m];
+  rows.push(["Soins",meds+(duo?" · +1 trousse pour relever":""),""]);
+  const nades=ag||ld.range==="short"?"2 frags + 1 flash":sn?"1 frag (défense de position)":"1 à 2 frags";
+  rows.push(["Grenades",nades+(duo?" · 1 fumigène pour relever":""),""]);
+  return rows;
+}
+const MAPFIT={short:["Armory","TV Station"],shortmid:["TV Station","Farm","Northridge","Armory"],mid:["Farm","Northridge","Valley"],long:["Valley","Farm","Northridge"]};
+function maps(){
+  const key=MODENAME[ld.mode];
+  const r=ld.style==="sniper"?"long":ld.range;
+  return MAPFIT[r].filter(n=>MAPS.find(m=>m.n===n)?.modes.includes(key)).concat(ld.mode==="forbidden"&&r!=="short"?["Airport"]:[]).filter((x,i,a)=>a.indexOf(x)===i);
+}
+
+let ldText="";
+function renderLoadout(){
+  document.querySelectorAll("#picker .filters").forEach(g=>g.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.v===ld[g.dataset.k])));
+  const {list,over}=pickPrimary();
+  if(!list.length){$("ldWeapons").innerHTML=`<p class="empty">Aucune arme pour ce combo.</p>`;return}
+  const prim=list[ldAlt%list.length],sec=pickSecondary(prim),am=pickAmmo(prim.cal),am2=sec?pickAmmo(sec.cal):null;
+  const persp=PRESETS[ld.team][ld.style==="sniper"?"loot":"aggro"];
+  const perks=ld.style==="sniper"?(ld.team==="duo"?["Focus Puller","Veteran","Battlefield Healing","Marathon"]:["Focus Puller","Veteran","Marathon","Emergency Evasion"]):persp.s;
+  $("ldLabel").textContent=`${MODENAME[ld.mode]} · ${ld.team==="solo"?"Solo":"Duo"} · ${STYLE2[ld.style]} · ${ld.style==="sniper"?"Long":RANGENAME[ld.range]} · arme ${list.length>1?(ldAlt%list.length+1)+" / "+list.length:"1 / 1"}`;
+  const ammoRow=(a,cal)=>a?`<span class="ammo-tag">${cal} ${a.best[0]}</span> · pen ${a.best[1]} / dégâts ${a.best[2]}<small>2e chargeur IA : ${a.cheap[0]}${ld.mode!=="forbidden"&&a.best!==AMMO[cal][0]?` · ${AMMO[cal][0]} hors cap ${MODENAME[ld.mode]}`:""}</small>`:"Meilleure munition de son calibre dispo au cap du mode";
+  $("ldWeapons").innerHTML=(over?`<p class="warn">Rien dans ce budget : voici le moins cher qui colle au style.</p>`:"")
+    +buildCard(prim,{title:"Arme principale"})
+    +`<div class="panel"><div class="slots"><div class="slotrow"><span>Munition</span><div>${ammoRow(am,prim.cal)}</div></div>${sec?`<div class="slotrow"><span>Mun. 2nde</span><div>${ammoRow(am2,sec.cal)}</div></div>`:""}</div></div>`
+    +(sec?buildCard(sec,{title:"Arme secondaire (pour le CQB)"}):"");
+  const g=gear(prim);
+  $("ldSlots").innerHTML=g.map(([k,v,w])=>`<div class="slotrow"><span>${k}</span><div><b>${v}</b>${w?`<small>${w}</small>`:""}</div></div>`).join("")
+    +`<div class="slotrow"><span>Maps</span><div><b>${maps().join(" · ")}</b></div></div>`;
+  $("ldPerks").innerHTML=skillRows(perks);
+  const why=[];
+  const rec=prim.v+prim.h;
+  if(ld.style==="zero") why.push(`${prim.n} : ${rec} de recul cumulé V+H, parmi les plus stables de ta tranche de prix.`);
+  if(ld.style==="aggro") why.push(`${prim.n} : ergo ${prim.e}, l'arme sort vite en visée sur les peeks.`);
+  if(ld.style==="dmg") why.push(`${prim.cal||CLS[prim.c]} : un des calibres qui tapent le plus fort, moins de balles par kill.`);
+  if(ld.style==="sniper") why.push(prim.c==="bolt"?`${prim.w} : one-tap à distance, l'arme secondaire couvre les rushs.`:`${prim.w} : DMR semi-auto, tu enchaînes les tirs sans perdre la cible.`);
+  if(ld.style==="eq") why.push(`${prim.n} : meilleur compromis recul / ergo du budget.`);
+  if(am) why.push(ld.mode==="forbidden"?`${am.best[0]} : la meilleure pen du ${prim.cal}, c'est ce qu'il faut contre les classes 6.`:`${am.best[0]} : meilleure pen estimée sous le cap ${MODENAME[ld.mode]}.`);
+  if(ld.team==="duo") why.push("Duo : Battlefield Healing, un soin et un fumigène en plus pour relever sans perdre le kit.");
+  if(ld.mode==="lockdown"&&prim.t.includes("ld")) why.push("Build marqué Lockdown par la commu : reste dans le cap.");
+  $("ldWhy").innerHTML=why.map(x=>`<li>${x}</li>`).join("");
+  ldText=[`Ez. · ${$("ldLabel").textContent.replace(/ · arme.*/,"")}`,
+    `Arme : ${prim.n} (~${kfmt(prim.p)}) · code ${prim.code}`,
+    am?`Munition : ${prim.cal} ${am.best[0]}`:"",
+    sec?`Secondaire : ${sec.n} (~${kfmt(sec.p)}) · code ${sec.code}`+(am2?` · ${sec.cal} ${am2.best[0]}`:""):"",
+    ...g.map(([k,v])=>`${k} : ${v}`),
+    `Perks : ${perks.join(", ")}`,`Maps : ${maps().join(", ")}`].filter(Boolean).join("\n");
+}
+$("picker").addEventListener("click",e=>{
+  const c=e.target.closest(".chip"); if(!c) return;
+  ld[c.closest(".filters").dataset.k]=c.dataset.v; ldAlt=0; store.set("loadout",ld); renderLoadout();
+});
+$("ldNext").addEventListener("click",()=>{ldAlt++;renderLoadout()});
+const LDKEYS={mode:["normal","lockdown","forbidden"],team:["solo","duo"],style:["aggro","zero","dmg","sniper","eq"],range:["short","shortmid","mid","long"],budget:["200","300","400","500","650","9999"]};
+$("ldRoll").addEventListener("click",()=>{
+  for(const k in LDKEYS) ld[k]=LDKEYS[k][Math.floor(Math.random()*LDKEYS[k].length)];
+  ldAlt=0;store.set("loadout",ld);renderLoadout();
+});
+const ldHash=()=>"#stuff?"+Object.keys(LDKEYS).map(k=>k[0]+"="+ld[k]).join("&")+(ldAlt?"&a="+ldAlt:"");
+$("ldLink").addEventListener("click",e=>{
+  try{history.replaceState(null,"",ldHash())}catch(_){}
+  copyText(e.currentTarget,location.href.split("#")[0]+ldHash(),"Lien");
+});
+(function(){ // stuff partagé par lien : #stuff?m=forbidden&t=duo&s=sniper&r=long&b=9999
+  const q=location.hash.split("?")[1]; if(!q) return;
+  const P=new URLSearchParams(q);
+  for(const k in LDKEYS){const v=P.get(k[0]);if(LDKEYS[k].includes(v)) ld[k]=v}
+  ldAlt=Math.max(0,parseInt(P.get("a"))||0);
+})();
+$("ldCopy").addEventListener("click",e=>copyText(e.currentTarget,ldText,"Copier le stuff"));
+
+/* ---------- Réglages ---------- */
+const SETTINGS=[
+ ["Graphismes",[
+  ["Mode d'affichage","Plein écran","Moins d'input lag qu'en fenêtré sans bordure."],
+  ["FOV","Haut","Baisse un peu si tu joues beaucoup long range : les cibles lointaines paraissent plus petites."],
+  ["Upscaling","DLSS / FSR Qualité","Évite Performance en 1080p, l'image bave sur les silhouettes lointaines."],
+  ["NVIDIA Reflex","Activé + Boost",""],
+  ["V-Sync","Off","G-Sync / FreeSync + limite de FPS à la place."],
+  ["Limite de FPS","Fréquence écran − 3","Frametime stable = recul plus prévisible."],
+  ["Flou, DoF, grain","Off",""],
+  ["Netteté","+","Repérage des silhouettes, surtout avec DLSS / FSR."],
+  ["Luminosité","Réglée en intérieur","Dans un bâtiment sombre : voir les coins sans délaver l'extérieur."],
+  ["Ombres","Moyen","En bas, certaines zones deviennent plus dures à lire."]
+ ]],
+ ["Audio",[
+  ["Musique","Off",""],
+  ["Profil audio","Casque",""],
+  ["Son spatial Windows","Off","Ne cumule pas Sonic / Atmos avec la spatialisation du jeu."],
+  ["Chat vocal","Push-to-talk",""]
+ ]],
+ ["Contrôles",[
+  ["Sensi","30 à 45 cm / 360°","Repère tactique. Garde la même que sur ton jeu principal si tu en as un."],
+  ["Sensi en visée","Testée au stand","Le recul doit se tenir sans forcer."],
+  ["Lean (Q / E)","Maintien ou bascule","Choisis une fois et ne change plus."],
+  ["Regard libre","Bindé",""],
+  ["Soins rapides","Raccourcis assignés","Bandage, trousse, antidouleur."],
+  ["Mode de tir","Touche connue","Les armes ramassées sont souvent en semi."],
+  ["Vérif chargeur","Touche connue",""]
+ ]],
+ ["PC & pilotes",[
+  ["Pilote GPU","À jour",""],
+  ["Mode jeu Windows","Activé",""],
+  ["Planification GPU accélérée","Activée",""],
+  ["Plan d'alimentation","Performances élevées",""],
+  ["Overlays","Off (sauf utiles)","Discord, GeForce, Game Bar : FPS et saccades."],
+  ["Vibrance numérique","60 à 70 %","Ennemis plus visibles dans la végétation."],
+  ["Fréquence écran","Vérifiée","Ton 144 / 240 Hz n'est pas resté à 60 Hz dans Windows."]
+ ]]
+];
+(function(){
+  const total=SETTINGS.reduce((n,[,items])=>n+items.length,0);
+  let done=new Set(store.get("settings",[]));
+  function upd(){const n=done.size;$("setBar").style.width=(n/total*100)+"%";$("setCount").textContent=`${n} / ${total}`}
+  function render(){
+    $("settingsList").innerHTML=SETTINGS.map(([title,items])=>`<div class="panel"><h3>${title}</h3>${items.map(([k,v,w])=>{
+      const id=title+"/"+k;
+      return `<label class="check"><input type="checkbox" data-id="${id}" ${done.has(id)?"checked":""}><span><b>${k}</b><span class="val">${v}</span></span>${w?`<small>${w}</small>`:""}</label>`}).join("")}</div>`).join("");
+    upd();
+  }
+  $("settingsList").addEventListener("change",e=>{const id=e.target.dataset.id;if(!id)return;e.target.checked?done.add(id):done.delete(id);store.set("settings",[...done]);upd()});
+  $("setReset").addEventListener("click",()=>{done=new Set();store.set("settings",[]);render()});
+  render();
+})();
+
+/* ---------- Onglets ---------- */
+const TABS=[...document.querySelectorAll("nav.tabs button")].map(b=>b.dataset.tab);
+document.querySelector("nav.tabs").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return; show(b.dataset.tab); b.scrollIntoView({block:"nearest",inline:"nearest"});
+});
+function show(id){
+  document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",x.dataset.tab===id));
+  document.querySelectorAll("section[role=tabpanel]").forEach(s=>s.hidden=s.id!==id);
+  store.set("tab",id);
+  try{history.replaceState(null,"","#"+id)}catch(_){}
+}
+renderBuilds();renderPerks();renderMaps();renderLoadout();
+const h0=location.hash.slice(1).split("?")[0];
+let start=TABS.includes(h0)?h0:store.get("tab",null);
+if(start&&TABS.includes(start)&&start!=="stuff") show(start);
+</script>
+</body>
+</html>
